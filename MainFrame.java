@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JLabel;
 
 
@@ -39,6 +40,12 @@ public class MainFrame
     public static void main(String[] args) throws IOException, UnsupportedAudioFileException
     {
         featureExtractor = new FeatureExtractor();
+        // parameter is string path to folder with audio files
+        ArrayList trainingFilesFeatures = featureExtractor.extractFeatures("resources/training");
+        ArrayList testingFilesFeatures = featureExtractor.extractFeatures("resources/testing");
+        System.out.println(trainingFilesFeatures);
+        System.out.println(testingFilesFeatures);
+
         EventQueue.invokeLater(new Runnable()
         {
             public void run()
