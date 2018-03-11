@@ -20,7 +20,8 @@ public class FeatureExtractor
     private int bufferOverlap = 0;
     private int sampleRate = 44100;
     ArrayList<String> fileFeatures = new ArrayList<String>();
-    int count = 0;
+    int YINcount = 0;
+    float YINprobability = 0;
     int silences = 0;
     float zeroCrossingRate = 0;
     float[] fileAmplitudeBins = new float[1024];
@@ -122,23 +123,24 @@ public class FeatureExtractor
             public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent)
             {
                 //System.out.println(audioEvent.getTimeStamp() + " " + pitchDetectionResult.getPitch());
-                double timeStamp = audioEvent.getTimeStamp();
-                float pitch = pitchDetectionResult.getPitch();
-                float probability = pitchDetectionResult.getProbability();
-                double rms = audioEvent.getRMS() * 100;
+                //double timeStamp = audioEvent.getTimeStamp();
+                //float pitch = pitchDetectionResult.getPitch();
+                YINprobability += pitchDetectionResult.getProbability();
+                //double rms = audioEvent.getRMS() * 100;
                 if(pitchDetectionResult.isPitched())
                 {
                     //System.out.println("pitch " + pitch + " probability " + probability + " rms " + rms);
-                    count++;
+                    YINcount++;
                 }
             }
         };
         PitchProcessor pp = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, sampleRate, audioBufferSize, handler);
         audioDispatcher.addAudioProcessor(pp);
         audioDispatcher.run();
-        output = output + Integer.toString(count) + ",";
+        output = output + Integer.toString(YINcount) + "," + Float.toString(YINprobability / YINcount) + ",";
         //System.out.println(output);
-        count = 0;
+        YINcount = 0;
+        YINprobability = 0;
         //audioDispatcher.removeAudioProcessor(pp);
         return output;
     }
