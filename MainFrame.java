@@ -45,7 +45,7 @@ public class MainFrame
 
     private JFrame frame;
     private DefaultListModel listModel = new DefaultListModel();
-    private int numFiles = 14;
+    private int numFiles = 12;
     private Instances trainDataSet;
     private int selected;
     private NaiveBayes nb;
@@ -229,13 +229,13 @@ public class MainFrame
     
     public String convertToImagePath(){
     	String temp = "";
-    	if(selected < 7){
+    	if(selected < 6){
     		temp += "mu";
-    		temp += (selected + 14);
+    		temp += (selected + 15);
     	}
     	else{
     		temp += "sp";
-    		temp += (selected + 7);
+    		temp += (selected + 9);
     	}
     	temp += ".wav";
     	
