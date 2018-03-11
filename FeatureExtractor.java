@@ -6,6 +6,7 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.fft.FFT;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class FeatureExtractor
     private int audioBufferSize = 2048;
     private int bufferOverlap = 0;
     private int sampleRate = 44100;
-    ArrayList fileFeatures = new ArrayList();
+    ArrayList<String> fileFeatures = new ArrayList<String>();
     int count = 0;
     int silences = 0;
     float zeroCrossingRate = 0;
@@ -34,7 +35,7 @@ public class FeatureExtractor
     Generates and stores comma separated features
     Returns an ArrayList with each index being the features for a file in the folder
      */
-    public ArrayList extractFeatures(String path) throws IOException, UnsupportedAudioFileException
+    public ArrayList<String> extractFeatures(String path) throws IOException, UnsupportedAudioFileException
     {
         File[] audioFiles = new File(path).listFiles();
 
@@ -45,7 +46,7 @@ public class FeatureExtractor
             if(!file.isDirectory())
             {
                 String features = "";
-                features = features + file + ",";
+                //features = features + file + ",";
                 audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
                 features = features + YINPitch(audioDispatcher);
                 audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
@@ -53,14 +54,57 @@ public class FeatureExtractor
                 audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
                 features = features + silenceDetector(audioDispatcher);
                 audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
-                features = features + spectralCentroid(audioDispatcher);
+                features = features + spectralCentroid(audioDispatcher) + ",";
+                String fileName = getFileName(file);
+                features = features + fileName;
                 fileFeatures.add(features);
             }
         }
         return fileFeatures;
     }
+    
+    public Double[] extractFeaturesForTest(String path) throws IOException, UnsupportedAudioFileException{
+    	File file = new File(path);
+    		if(!file.isDirectory())
+    		{
+    			Double[] features = new Double[4];
+    			//features = features + file + ",";
+    			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
+    				String str = YINPitch(audioDispatcher);
+    				str = str.replaceAll("[^\\d.]", "");
+    			features[0] = Double.parseDouble(str);
+    			
+    			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
+    				str = ZeroCrossingRate(audioDispatcher);
+    				str = str.replaceAll("[^\\d.]", "");
+    			features[1] = Double.parseDouble(str);
+    			
+    			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
+    				str = silenceDetector(audioDispatcher);
+    				str = str.replaceAll("[^\\d.]", "");
+    			features[2] = Double.parseDouble(str);
+    			
+    			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
+    				str = spectralCentroid(audioDispatcher);
+    				str = str.replaceAll("[^\\d.]", "");
+    			features[3] = Double.parseDouble(str);
+    			return features;
+    		}
+    	return null;
+    };
 
-    public ArrayList getFileFeatures()
+    //gets rid of all digits
+    private String getFileName(File file) {
+		String temp = file.getName();
+		if(temp.substring(0, 2).equals("mu")){
+			return "Music";
+		}
+		else{
+			return "Speech";
+		}
+	}
+
+	public ArrayList<String> getFileFeatures()
     {
         return fileFeatures;
     }
