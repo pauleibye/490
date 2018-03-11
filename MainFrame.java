@@ -33,10 +33,27 @@ import javax.swing.JLabel;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.matrix.*;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
-import weka.classifiers.bayes.*;
+import weka.classifiers.*;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.lazy.LWL;
+import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.meta.RegressionByDiscretization;
+import weka.classifiers.rules.OneR;
+import weka.classifiers.trees.DecisionStump;
+import weka.classifiers.trees.HoeffdingTree;
+import weka.classifiers.trees.J48;
+import weka.classifiers.trees.LMT;
+import weka.classifiers.trees.M5P;
+
 import java.awt.Font;
 
 
@@ -48,7 +65,22 @@ public class MainFrame
     private int numFiles = 12;
     private Instances trainDataSet;
     private int selected;
-    private NaiveBayes nb;
+    //IBk - error
+    //NaiveBayes - 7/12
+    //J48 - 8/12
+    //LMT 9/12
+    //M5P - error
+    //HoeffdingTree - 7/12
+    //SMO - 6/12
+    //Logistic - 7/12
+    //OneR - 6/12
+    //AdaBoostM1 - 8/12
+    //LogitBoost - 8/12
+    //DecisionStump - 6/12
+    //LinearRegression - error
+    //LWL - 8/12 + errors
+    //RegressionByDiscretization - error
+    private LMT nb;
     private JLabel lblFeatures;
     private JLabel featuresDisplay;
     public static FeatureExtractor featureExtractor;
@@ -278,7 +310,7 @@ public class MainFrame
 			trainDataSet = source.getDataSet();						
 			trainDataSet.setClassIndex(trainDataSet.numAttributes()-1);
 			
-			nb = new NaiveBayes();
+			nb = new LMT();
 			nb.buildClassifier(trainDataSet);
 
 		} catch (Exception e) {
