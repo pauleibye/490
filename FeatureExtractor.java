@@ -10,6 +10,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /*
 extracts features from files in a folder
  */
@@ -72,8 +74,23 @@ public class FeatureExtractor
     			//features = features + file + ",";
     			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
     				String str = YINPitch(audioDispatcher);
+    				
+    				Pattern pattern = Pattern.compile(", *");
+    				Matcher matcher = pattern.matcher(str);
     				str = str.replaceAll("[^\\d.]", "");
-    			features[0] = Double.parseDouble(str);
+    				
+    				String str1 = "";
+    				String str2 = "";
+    				if (matcher.find()) {
+    				    str1 = str.substring(0, matcher.start());
+    				    str2 = str.substring(matcher.end());
+    				}
+    				/*
+
+    			features[0] = Double.parseDouble(str1);
+    			features[1] = Double.parseDouble(str2);
+    		*/
+    			features[0] = Double.parseDouble(str1) * Double.parseDouble(str2);
     			
     			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
     				str = ZeroCrossingRate(audioDispatcher);
@@ -137,7 +154,7 @@ public class FeatureExtractor
         PitchProcessor pp = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, sampleRate, audioBufferSize, handler);
         audioDispatcher.addAudioProcessor(pp);
         audioDispatcher.run();
-        output = output + Integer.toString(YINcount) + "," + Float.toString(YINprobability / YINcount) + ",";
+        output = output + Integer.toString(YINcount) + "," + Float.toString(YINprobability / YINcount);
         //System.out.println(output);
         YINcount = 0;
         YINprobability = 0;
