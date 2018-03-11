@@ -125,11 +125,11 @@ public class FeatureExtractor
                 //System.out.println(audioEvent.getTimeStamp() + " " + pitchDetectionResult.getPitch());
                 //double timeStamp = audioEvent.getTimeStamp();
                 //float pitch = pitchDetectionResult.getPitch();
-                YINprobability += pitchDetectionResult.getProbability();
                 //double rms = audioEvent.getRMS() * 100;
                 if(pitchDetectionResult.isPitched())
                 {
                     //System.out.println("pitch " + pitch + " probability " + probability + " rms " + rms);
+                    YINprobability += pitchDetectionResult.getProbability();
                     YINcount++;
                 }
             }
