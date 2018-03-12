@@ -154,7 +154,7 @@ public class FeatureExtractor
         PitchProcessor pp = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, sampleRate, audioBufferSize, handler);
         audioDispatcher.addAudioProcessor(pp);
         audioDispatcher.run();
-        output = output + Integer.toString(YINcount) + "," + Float.toString(YINprobability / YINcount);
+        output = output + Float.toString(YINprobability);
         //System.out.println(output);
         YINcount = 0;
         YINprobability = 0;
