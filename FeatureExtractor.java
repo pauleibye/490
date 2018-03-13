@@ -91,6 +91,7 @@ public class FeatureExtractor
     			features[1] = Double.parseDouble(str2);
     		*/
     			features[0] = Double.parseDouble(str1) * Double.parseDouble(str2);
+    			//features[0] = Double.parseDouble(str);
     			
     			audioDispatcher = AudioDispatcherFactory.fromFile(file, audioBufferSize, bufferOverlap);
     				str = ZeroCrossingRate(audioDispatcher);
@@ -154,8 +155,9 @@ public class FeatureExtractor
         PitchProcessor pp = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, sampleRate, audioBufferSize, handler);
         audioDispatcher.addAudioProcessor(pp);
         audioDispatcher.run();
-        output = output + Float.toString(YINprobability);
-        //System.out.println(output);
+        //output = output + Float.toString(YINprobability);
+        output = output + Integer.toString(YINcount) + "," + Float.toString(YINprobability / YINcount);
+
         YINcount = 0;
         YINprobability = 0;
         //audioDispatcher.removeAudioProcessor(pp);
