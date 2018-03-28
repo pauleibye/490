@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /*
-extracts features from files in a folder
+*FeatureExtractor Class:
+*used to extract YINPitch, ZeroCrossingRate, silenceRate, and spectral centroid of an audio file
+*these features are used by the machine learning algorithm to generate a model
  */
 public class FeatureExtractor
 {
@@ -34,9 +36,12 @@ public class FeatureExtractor
     }
 
     /*
-    Parses through the files in the path string provided
+     * 
+    Parses through the files in the directory provided
     Generates and stores comma separated features
     Returns an ArrayList with each index being the features for a file in the folder
+    @param path: file path to a directory
+    @return: an arraylist of numerical features as a CSV
      */
     public ArrayList<String> extractFeatures(String path) throws IOException, UnsupportedAudioFileException
     {
@@ -66,6 +71,12 @@ public class FeatureExtractor
         return fileFeatures;
     }
     
+    /*
+     * extract features for a single file, returns the same values as extractFeatures() method, except
+     * it returns them as an array to build an instance to be classified
+     * @param path: file path
+     * @return: a double array of the features of a single audio file
+     */
     public Double[] extractFeaturesForTest(String path) throws IOException, UnsupportedAudioFileException{
     	File file = new File(path);
     		if(!file.isDirectory())
@@ -107,12 +118,23 @@ public class FeatureExtractor
     				str = spectralCentroid(audioDispatcher);
     				str = str.replaceAll("[^\\d.]", "");
     			features[3] = Double.parseDouble(str);
+    			for(int i = 0; i < features.length; i++){
+    				System.out.print(features[i]);
+    				if(i < features.length - 1){
+    					System.out.print(",");
+    				}
+    			}
+    			System.out.println();
     			return features;
     		}
     	return null;
     };
 
-    //gets rid of all digits
+    /*
+     * Support method, returns a string of Music or speech based on the leading 2 characters of the file name
+     * @param: file
+     * @return: file type of Music or Speech
+     */
     private String getFileName(File file) {
 		String temp = file.getName();
 		if(temp.substring(0, 2).equals("mu")){
@@ -122,7 +144,8 @@ public class FeatureExtractor
 			return "Speech";
 		}
 	}
-
+    
+    
 	public ArrayList<String> getFileFeatures()
     {
         return fileFeatures;
@@ -131,6 +154,7 @@ public class FeatureExtractor
     /*
     Generates YIN human voice pitch tracking feature
     http://recherche.ircam.fr/equipes/pcm/cheveign/ps/2002_JASA_YIN_proof.pdf
+    @return: 2 numerical values separated by a comma returned as a string, returns YINPitch value and its weight
      */
     public String YINPitch(AudioDispatcher audioDispatcher) throws IOException, UnsupportedAudioFileException
     {
@@ -166,6 +190,7 @@ public class FeatureExtractor
 
     /*
     Generates the zero crossing rate feature
+    @return: the zero crossing rate value as a string
      */
     public String ZeroCrossingRate(AudioDispatcher audioDispatcher)
     {

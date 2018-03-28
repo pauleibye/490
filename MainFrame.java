@@ -56,7 +56,11 @@ import weka.classifiers.trees.M5P;
 
 import java.awt.Font;
 
-
+/*
+ * MainFrame class:
+ * -responsible for GUI drawing and Machine Learning
+ * Use logistic model tree as it generated the best model
+ */
 public class MainFrame
 {
 
@@ -65,6 +69,7 @@ public class MainFrame
     private int numFiles = 12;
     private Instances trainDataSet;
     private int selected;
+    //List of all attempted models and their results
     //IBk - error
     //NaiveBayes - 7/12
     //J48 - 8/12
@@ -80,12 +85,13 @@ public class MainFrame
     //LinearRegression - error
     //LWL - 8/12 + errors
     //RegressionByDiscretization - error
-    private LMT nb;
+    private LMT nb; //Logistic Model Tree
     private JLabel lblFeatures;
     private JLabel featuresDisplay;
     public static FeatureExtractor featureExtractor;
     private JLabel resultLabel;
     private JButton btnPlayAudio;
+    private JLabel labelCorrect;
 
     /**
      * Launch the application.
@@ -198,15 +204,29 @@ public class MainFrame
         
         this.resultLabel.setText("No Image Processed");
         
+        labelCorrect = new JLabel("");
+        GridBagConstraints gbc_labelCorrect = new GridBagConstraints();
+        gbc_labelCorrect.insets = new Insets(0, 0, 0, 5);
+        gbc_labelCorrect.gridx = 5;
+        gbc_labelCorrect.gridy = 3;
+        frame.getContentPane().add(labelCorrect, gbc_labelCorrect);
+        
         createCSVandArff(featureExtractor);
         buildModel();
         
-        
+        /*
+         * Parse button handler
+         * Takes selected file and runs it against the machine learning model
+         * updates label to display if algorithm was correct or not
+         */
         btnParse.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
             	try {
+            		if(list.isSelectionEmpty()){
+            			return;
+            		}
                     selected = list.getSelectedIndex();
                     String path = convertToImagePath();
                     
@@ -224,6 +244,12 @@ public class MainFrame
 	                String actual = convertToImagePath();
 	                resultLabel.setText("Selected File: " + actual);
 	                featuresDisplay.setText("Algorithm Prediction: " + predStr);
+	                if(predStr.substring(0, 1).toLowerCase().equals(actual.substring(0, 1).toLowerCase())){
+	                	labelCorrect.setText("Yes, Prediction is correct");
+	                }
+	                else{
+	                	labelCorrect.setText("No, Prediction is wrong");
+	                }
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} catch (UnsupportedAudioFileException e1) {
@@ -236,6 +262,9 @@ public class MainFrame
             }
         });
         
+        /*
+         * Plays selected audio file on click, NOTE, file has to parsed first
+         */
         btnPlayAudio.addActionListener(new ActionListener(){
         	 public void actionPerformed(ActionEvent e)
              {
@@ -259,7 +288,14 @@ public class MainFrame
 
     }
     
+    /*
+     * converts from value to appropriate filename
+     * @return: file name as a string
+     */
     public String convertToImagePath(){
+    	if(selected < 0){
+    		return null;
+    	}
     	String temp = "";
     	if(selected < 6){
     		temp += "mu";
@@ -274,7 +310,7 @@ public class MainFrame
     	return temp;
     };
     
-    //convert our weird arraylist to a sick ARFF
+    //convert our weird arraylist to a sick ARFF file and save it
     public void createCSVandArff(FeatureExtractor FE){
     	  try {
     		     File file = new File("csv.txt");
@@ -304,6 +340,9 @@ public class MainFrame
     		  }
     };
     
+    /*
+     * Build a LMT model from our .arff file
+     */
     public void buildModel(){
     	try {
 			DataSource source = new DataSource("data.arff");

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="reference">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/Beads_Processing.zip!/beads_processing/beads/reference" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/Beads_Processing.zip!/beads_processing/beads/src/beads_io" />
+      <root url="jar://$PROJECT_DIR$/Beads_Processing.zip!/beads_processing/beads/src/beads_main" />
+    </SOURCES>
+  </library>
+</component>
